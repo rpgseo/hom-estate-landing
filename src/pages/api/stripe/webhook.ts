@@ -2,21 +2,20 @@ import type { APIRoute } from "astro";
 import { getLeadByStripeId, updateLead } from "../../../lib/airtable";
 import { createCalendarEvent } from "../../../lib/google-calendar";
 import { sendBookingConfirmation } from "../../../lib/resend";
+import { env } from "cloudflare:workers";
 
-export const POST: APIRoute = async ({ request, locals }) => {
-  const env = locals.runtime?.env as Record<string, string> | undefined;
-  const stripeWebhookSecret = env?.STRIPE_WEBHOOK_SECRET ?? "";
-  const airtableKey = env?.AIRTABLE_API_KEY ?? "";
-  const airtableBase = env?.AIRTABLE_BASE_ID ?? "";
-  const serviceAccountJson = env?.GOOGLE_SERVICE_ACCOUNT_JSON ?? "";
-  const calendarId = env?.GOOGLE_CALENDAR_ID ?? "primary";
-  const resendKey = env?.RESEND_API_KEY ?? "";
+export const POST: APIRoute = async ({ request }) => {
+  const cfEnv = env as unknown as Record<string, string>;
+  const stripeWebhookSecret = cfEnv.STRIPE_WEBHOOK_SECRET ?? "";
+  const airtableKey = cfEnv.AIRTABLE_API_KEY ?? "";
+  const airtableBase = cfEnv.AIRTABLE_BASE_ID ?? "";
+  const serviceAccountJson = cfEnv.GOOGLE_SERVICE_ACCOUNT_JSON ?? "";
+  const calendarId = cfEnv.GOOGLE_CALENDAR_ID ?? "primary";
+  const resendKey = cfEnv.RESEND_API_KEY ?? "";
 
   const signature = request.headers.get("stripe-signature") ?? "";
   const body = await request.text();
 
-  // Verify Stripe signature (simplified — use stripe SDK in production)
-  // For now we check the signature header exists
   if (stripeWebhookSecret && !signature) {
     return new Response("Missing signature", { status: 400 });
   }
@@ -53,14 +52,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const roomName = meta.room ?? "Habitación";
   const colivingName = meta.coliving ?? "Coliving Delicias";
 
-  // Update Airtable lead status
   if (airtableKey && airtableBase && leadId) {
     try {
-      await updateLead(airtableKey, airtableBase, leadId, {
-        Estado: "fianza pagada",
-      });
+      await updateLead(airtableKey, airtableBase, leadId, { Estado: "fianza pagada" });
 
-      // Try to get check-in from lead record for calendar blocking
       const lead = await getLeadByStripeId(airtableKey, airtableBase, obj.id);
       if (lead && serviceAccountJson) {
         const checkIn = lead.fields["Fecha entrada"] as string | undefined;
@@ -79,16 +74,14 @@ export const POST: APIRoute = async ({ request, locals }) => {
           });
         }
 
-        // Send confirmation email
         if (resendKey && guestEmail) {
-          const checkInDisplay = lead.fields["Fecha entrada"] as string ?? "";
           await sendBookingConfirmation(
             resendKey,
             guestEmail,
             lead.fields["Nombre"] as string ?? "Inquilino",
             roomName,
             colivingName,
-            checkInDisplay
+            lead.fields["Fecha entrada"] as string ?? ""
           );
         }
       }

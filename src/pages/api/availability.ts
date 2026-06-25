@@ -1,27 +1,23 @@
 import type { APIRoute } from "astro";
 import { getBusyPeriods } from "../../lib/google-calendar";
 import { coliving } from "../../data/coliving";
+import { env } from "cloudflare:workers";
 
-export const GET: APIRoute = async ({ url, locals }) => {
-  const env = locals.runtime?.env as Record<string, string> | undefined;
+export const GET: APIRoute = async ({ url }) => {
+  const cfEnv = env as unknown as Record<string, string>;
 
-  const serviceAccountJson = env?.GOOGLE_SERVICE_ACCOUNT_JSON ?? "";
-  const calendarId = env?.GOOGLE_CALENDAR_ID ?? coliving.googleCalendarId;
+  const serviceAccountJson = cfEnv.GOOGLE_SERVICE_ACCOUNT_JSON ?? "";
+  const calendarId = cfEnv.GOOGLE_CALENDAR_ID ?? coliving.googleCalendarId;
 
-  const monthParam = url.searchParams.get("month"); // YYYY-MM
+  const monthParam = url.searchParams.get("month");
   const now = new Date();
-  const year = monthParam
-    ? parseInt(monthParam.split("-")[0]!)
-    : now.getFullYear();
-  const month = monthParam
-    ? parseInt(monthParam.split("-")[1]!) - 1
-    : now.getMonth();
+  const year = monthParam ? parseInt(monthParam.split("-")[0]!) : now.getFullYear();
+  const month = monthParam ? parseInt(monthParam.split("-")[1]!) - 1 : now.getMonth();
 
   const timeMin = new Date(year, month, 1).toISOString();
-  const timeMax = new Date(year, month + 3, 1).toISOString(); // 3 months ahead
+  const timeMax = new Date(year, month + 3, 1).toISOString();
 
   if (!serviceAccountJson) {
-    // Dev mode: return mock busy periods
     return new Response(
       JSON.stringify({
         busy: [
@@ -43,7 +39,7 @@ export const GET: APIRoute = async ({ url, locals }) => {
     const msg = e instanceof Error ? e.message : String(e);
     console.error("availability error:", msg);
     return new Response(JSON.stringify({ busy: [], error: msg }), {
-      status: 200, // return 200 so frontend doesn't crash, error visible in payload
+      status: 200,
       headers: { "Content-Type": "application/json" },
     });
   }

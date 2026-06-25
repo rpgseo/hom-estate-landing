@@ -1,10 +1,11 @@
 import type { APIRoute } from "astro";
+import { env } from "cloudflare:workers";
 
-export const GET: APIRoute = async ({ locals }) => {
-  const env = locals.runtime?.env as Record<string, string> | undefined;
+export const GET: APIRoute = async () => {
+  const cfEnv = env as unknown as Record<string, string>;
 
-  const calendarId = env?.GOOGLE_CALENDAR_ID ?? "NOT SET";
-  const jsonRaw = env?.GOOGLE_SERVICE_ACCOUNT_JSON ?? "NOT SET";
+  const calendarId = cfEnv.GOOGLE_CALENDAR_ID ?? "NOT SET";
+  const jsonRaw = cfEnv.GOOGLE_SERVICE_ACCOUNT_JSON ?? "NOT SET";
 
   let jsonStatus = "NOT SET";
   let clientEmail = "";
@@ -18,18 +19,11 @@ export const GET: APIRoute = async ({ locals }) => {
       hasPrivateKey = !!parsed.private_key;
     } catch (e) {
       jsonStatus = `PARSE ERROR: ${e instanceof Error ? e.message : String(e)}`;
-      jsonStatus += ` | First 100 chars: ${jsonRaw.slice(0, 100)}`;
     }
   }
 
   return new Response(
-    JSON.stringify({
-      calendarId,
-      jsonStatus,
-      clientEmail,
-      hasPrivateKey,
-      envKeys: env ? Object.keys(env) : [],
-    }, null, 2),
+    JSON.stringify({ calendarId, jsonStatus, clientEmail, hasPrivateKey }, null, 2),
     { headers: { "Content-Type": "application/json" } }
   );
 };

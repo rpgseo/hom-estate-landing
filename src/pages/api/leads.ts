@@ -1,14 +1,15 @@
 import type { APIRoute } from "astro";
 import { createLead } from "../../lib/airtable";
 import { sendLeadNotification } from "../../lib/resend";
+import { env } from "cloudflare:workers";
 
-export const POST: APIRoute = async ({ request, locals }) => {
-  const env = locals.runtime?.env as Record<string, string> | undefined;
+export const POST: APIRoute = async ({ request }) => {
+  const cfEnv = env as unknown as Record<string, string>;
 
-  const airtableKey = env?.AIRTABLE_API_KEY ?? "";
-  const airtableBase = env?.AIRTABLE_BASE_ID ?? "";
-  const resendKey = env?.RESEND_API_KEY ?? "";
-  const notifyEmail = env?.NOTIFY_EMAIL ?? "ramonpg91@gmail.com";
+  const airtableKey = cfEnv.AIRTABLE_API_KEY ?? "";
+  const airtableBase = cfEnv.AIRTABLE_BASE_ID ?? "";
+  const resendKey = cfEnv.RESEND_API_KEY ?? "";
+  const notifyEmail = cfEnv.NOTIFY_EMAIL ?? "ramonpg91@gmail.com";
 
   let body: Record<string, string>;
   try {
@@ -42,7 +43,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
     notes,
   };
 
-  // Save to Airtable (if configured)
   if (airtableKey && airtableBase) {
     try {
       await createLead(airtableKey, airtableBase, leadData);
@@ -53,7 +53,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
     console.log("[DEV] Lead not saved to Airtable (no credentials):", leadData);
   }
 
-  // Send email notification
   if (resendKey) {
     try {
       await sendLeadNotification(resendKey, notifyEmail, leadData);

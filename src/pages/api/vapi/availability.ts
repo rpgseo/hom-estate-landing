@@ -1,13 +1,14 @@
 import type { APIRoute } from "astro";
 import { getBusyPeriods } from "../../../lib/google-calendar";
 import { coliving } from "../../../data/coliving";
+import { env } from "cloudflare:workers";
 
-export const GET: APIRoute = async ({ url, locals }) => {
-  const env = locals.runtime?.env as Record<string, string> | undefined;
-  const serviceAccountJson = env?.GOOGLE_SERVICE_ACCOUNT_JSON ?? "";
-  const calendarId = env?.GOOGLE_CALENDAR_ID ?? coliving.googleCalendarId;
+export const GET: APIRoute = async ({ url }) => {
+  const cfEnv = env as unknown as Record<string, string>;
+  const serviceAccountJson = cfEnv.GOOGLE_SERVICE_ACCOUNT_JSON ?? "";
+  const calendarId = cfEnv.GOOGLE_CALENDAR_ID ?? coliving.googleCalendarId;
 
-  const checkIn = url.searchParams.get("checkin"); // YYYY-MM-DD
+  const checkIn = url.searchParams.get("checkin");
   const months = parseInt(url.searchParams.get("months") ?? "3");
 
   if (!checkIn) {
@@ -33,18 +34,11 @@ export const GET: APIRoute = async ({ url, locals }) => {
   }
 
   try {
-    const busy = await getBusyPeriods(
-      serviceAccountJson,
-      calendarId,
-      start.toISOString(),
-      end.toISOString()
-    );
-
-    const requested = { start: start.getTime(), end: end.getTime() };
+    const busy = await getBusyPeriods(serviceAccountJson, calendarId, start.toISOString(), end.toISOString());
     const conflict = busy.some((b) => {
       const bs = new Date(b.start).getTime();
       const be = new Date(b.end).getTime();
-      return bs < requested.end && be > requested.start;
+      return bs < end.getTime() && be > start.getTime();
     });
 
     return new Response(
@@ -59,7 +53,6 @@ export const GET: APIRoute = async ({ url, locals }) => {
       { headers: { "Content-Type": "application/json" } }
     );
   } catch (e) {
-    console.error(e);
     return new Response(
       JSON.stringify({
         available: null,
