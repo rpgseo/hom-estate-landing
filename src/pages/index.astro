@@ -1,0 +1,297 @@
+---
+import Layout from '../layouts/Layout.astro';
+import BookingForm from '../components/BookingForm.tsx';
+import { coliving, rooms } from '../data/coliving';
+
+const availableRooms = rooms.filter(r => r.status === 'available');
+---
+
+<Layout
+  title="Coliving Delicias Zaragoza — Habitaciones con suministros incluidos | HOM.ESTATE"
+  description="Habitaciones en coliving en el barrio Delicias de Zaragoza. Suministros incluidos, ambiente tranquilo y reserva online fácil."
+>
+
+  <!-- HERO -->
+  <section class="relative min-h-[80vh] flex items-end">
+    <div class="absolute inset-0 z-0">
+      <img
+        src={coliving.photos[0]}
+        alt="Coliving Delicias Zaragoza"
+        class="w-full h-full object-cover"
+        loading="eager"
+      />
+      <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+    </div>
+
+    <div class="relative z-10 max-w-5xl mx-auto px-6 pb-16 text-white w-full">
+      <div class="inline-block bg-rose-600 text-white text-xs font-semibold px-3 py-1 rounded-full mb-4 uppercase tracking-wider">
+        {coliving.city} — {coliving.zone}
+      </div>
+      <h1 class="text-4xl md:text-6xl font-bold leading-tight mb-4">
+        {coliving.name}
+      </h1>
+      <p class="text-xl text-gray-200 max-w-2xl mb-8">
+        {coliving.tagline}
+      </p>
+      <div class="flex flex-wrap gap-3">
+        <a
+          href="#reserva"
+          class="bg-rose-600 hover:bg-rose-700 text-white font-semibold px-8 py-3 rounded-lg transition-colors"
+        >
+          Ver disponibilidad
+        </a>
+        <a
+          href="#habitaciones"
+          class="bg-white/10 hover:bg-white/20 text-white font-semibold px-8 py-3 rounded-lg border border-white/30 backdrop-blur-sm transition-colors"
+        >
+          Ver habitaciones
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUICK STATS -->
+  <section class="bg-gray-900 text-white py-8">
+    <div class="max-w-5xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+      <div>
+        <div class="text-2xl font-bold text-rose-400">{availableRooms.length}</div>
+        <div class="text-sm text-gray-400">Habitaciones disponibles</div>
+      </div>
+      <div>
+        <div class="text-2xl font-bold text-rose-400">desde {Math.min(...availableRooms.map(r => r.priceAnnual))} €</div>
+        <div class="text-sm text-gray-400">al mes (contrato anual)</div>
+      </div>
+      <div>
+        <div class="text-2xl font-bold text-rose-400">900 €</div>
+        <div class="text-sm text-gray-400">Fianza única</div>
+      </div>
+      <div>
+        <div class="text-2xl font-bold text-rose-400">Todo incluido</div>
+        <div class="text-sm text-gray-400">Luz, agua, wifi, limpieza</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="py-16 bg-white">
+    <div class="max-w-5xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
+      <div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4">Un piso que siente como hogar</h2>
+        <p class="text-gray-600 text-lg mb-6 leading-relaxed">
+          {coliving.description}
+        </p>
+        <p class="text-gray-600 leading-relaxed">
+          {coliving.zoneDescription}
+        </p>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        {coliving.photos.slice(1, 4).map((photo, i) => (
+          <img
+            src={photo}
+            alt={`Interior del coliving ${i + 2}`}
+            class={`rounded-xl object-cover w-full ${i === 0 ? 'col-span-2 h-48' : 'h-36'}`}
+            loading="lazy"
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- SUPPLIES INCLUDED -->
+  <section class="py-12 bg-gray-50">
+    <div class="max-w-5xl mx-auto px-6 text-center">
+      <h2 class="text-2xl font-bold text-gray-900 mb-8">Todo incluido en el precio</h2>
+      <div class="flex flex-wrap justify-center gap-4">
+        {coliving.supplies.map(supply => (
+          <div class="bg-white rounded-full px-5 py-2 shadow-sm text-sm font-medium text-gray-700 flex items-center gap-2">
+            <span class="text-rose-500">✓</span>
+            {supply}
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ROOMS -->
+  <section class="py-16 bg-white" id="habitaciones">
+    <div class="max-w-5xl mx-auto px-6">
+      <h2 class="text-3xl font-bold text-gray-900 mb-2 text-center">Habitaciones</h2>
+      <p class="text-gray-500 text-center mb-10">4 habitaciones. 3 disponibles ahora mismo.</p>
+
+      <div class="grid md:grid-cols-2 gap-8">
+        {rooms.map(room => (
+          <div class={`rounded-2xl overflow-hidden border-2 transition-all ${room.status === 'available' ? 'border-gray-200 hover:border-rose-300 hover:shadow-lg' : 'border-gray-100 opacity-60'}`}>
+            <div class="relative">
+              <img
+                src={room.photo}
+                alt={room.name}
+                class="w-full h-52 object-cover"
+                loading="lazy"
+              />
+              {room.status === 'occupied' && (
+                <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
+                  <span class="bg-gray-800 text-white text-sm font-semibold px-4 py-2 rounded-full">
+                    Ocupada actualmente
+                  </span>
+                </div>
+              )}
+              <div class="absolute top-3 right-3">
+                <span class={`text-xs font-semibold px-3 py-1 rounded-full ${room.status === 'available' ? 'bg-green-500 text-white' : 'bg-gray-500 text-white'}`}>
+                  {room.status === 'available' ? 'Disponible' : 'Ocupada'}
+                </span>
+              </div>
+            </div>
+
+            <div class="p-6">
+              <div class="flex items-start justify-between mb-3">
+                <div>
+                  <h3 class="text-xl font-bold text-gray-900">{room.name}</h3>
+                  <span class="text-sm text-gray-500 capitalize">{room.type} · {room.size} m²</span>
+                </div>
+                {room.status === 'available' && (
+                  <div class="text-right">
+                    <div class="text-xl font-bold text-rose-600">{room.priceAnnual} €<span class="text-sm font-normal">/mes</span></div>
+                    <div class="text-xs text-gray-400">contrato anual</div>
+                  </div>
+                )}
+              </div>
+
+              <p class="text-gray-600 text-sm mb-4 leading-relaxed">{room.description}</p>
+
+              {/* Pricing table */}
+              {room.status === 'available' && (
+                <div class="bg-gray-50 rounded-lg p-3 mb-4">
+                  <div class="grid grid-cols-3 gap-2 text-xs text-center">
+                    <div>
+                      <div class="font-bold text-gray-900">{room.priceAnnual} €</div>
+                      <div class="text-gray-500">Anual</div>
+                    </div>
+                    <div>
+                      <div class="font-bold text-gray-900">{room.priceSemester} €</div>
+                      <div class="text-gray-500">Semestral</div>
+                    </div>
+                    <div>
+                      <div class="font-bold text-gray-900">{room.priceMonthly} €</div>
+                      <div class="text-gray-500">Mensual</div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Equipment */}
+              <details class="group">
+                <summary class="text-sm font-medium text-rose-600 cursor-pointer list-none flex items-center gap-1">
+                  <span>Ver equipamiento completo</span>
+                  <svg class="w-4 h-4 group-open:rotate-180 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </summary>
+                <ul class="mt-3 space-y-1">
+                  {room.equipment.map(item => (
+                    <li class="text-xs text-gray-600 flex items-center gap-1">
+                      <span class="text-green-500 font-bold">✓</span> {item}
+                    </li>
+                  ))}
+                </ul>
+              </details>
+
+              {room.status === 'available' && (
+                <a
+                  href="#reserva"
+                  class="block w-full text-center mt-4 py-2 bg-rose-600 text-white rounded-lg text-sm font-semibold hover:bg-rose-700 transition-colors"
+                >
+                  Solicitar esta habitación
+                </a>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CONDITIONS -->
+  <section class="py-16 bg-gray-50">
+    <div class="max-w-5xl mx-auto px-6 grid md:grid-cols-3 gap-8">
+      <div class="bg-white rounded-2xl p-6 shadow-sm">
+        <div class="text-3xl mb-3">💶</div>
+        <h3 class="font-bold text-gray-900 mb-2">Fianza y reserva</h3>
+        <p class="text-gray-600 text-sm">
+          La fianza es de <strong>900 €</strong> y es obligatoria para confirmar la habitación.
+          Sin pago de fianza, la habitación no queda reservada.
+        </p>
+      </div>
+      <div class="bg-white rounded-2xl p-6 shadow-sm">
+        <div class="text-3xl mb-3">📅</div>
+        <h3 class="font-bold text-gray-900 mb-2">Pago mensual</h3>
+        <p class="text-gray-600 text-sm">
+          Estancias de 4+ meses: domiciliación bancaria entre el 1 y el 5.
+          Estancias cortas: transferencia en ese mismo periodo.
+        </p>
+      </div>
+      <div class="bg-white rounded-2xl p-6 shadow-sm">
+        <div class="text-3xl mb-3">🔑</div>
+        <h3 class="font-bold text-gray-900 mb-2">Check-out</h3>
+        <p class="text-gray-600 text-sm">
+          Vídeo del estado de la habitación y llaves en el escritorio.
+          Revisión en 5 días y devolución de fianza si todo correcto.
+        </p>
+      </div>
+    </div>
+
+    <!-- Rules -->
+    <div class="max-w-5xl mx-auto px-6 mt-8">
+      <div class="bg-white rounded-2xl p-6 shadow-sm">
+        <h3 class="font-bold text-gray-900 mb-4">Normas del coliving</h3>
+        <ul class="grid sm:grid-cols-2 gap-2">
+          {coliving.rules.map(rule => (
+            <li class="flex items-center gap-2 text-sm text-gray-600">
+              <span class="text-gray-400">·</span> {rule}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- BOOKING FORM -->
+  <section class="py-16 bg-white" id="reserva">
+    <div class="max-w-4xl mx-auto px-6">
+      <div class="text-center mb-10">
+        <h2 class="text-3xl font-bold text-gray-900 mb-2">Solicita tu habitación</h2>
+        <p class="text-gray-500">
+          Selecciona fecha de entrada y habitación. Te contactamos en menos de 24h para confirmar disponibilidad.
+        </p>
+      </div>
+      <div class="bg-white border-2 border-gray-100 rounded-2xl shadow-lg p-8">
+        <BookingForm rooms={rooms} client:load />
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-gray-900 text-white py-12">
+    <div class="max-w-5xl mx-auto px-6 grid md:grid-cols-3 gap-8">
+      <div>
+        <div class="text-xl font-bold mb-2">HOM.ESTATE</div>
+        <p class="text-gray-400 text-sm">
+          Gestión de colivings en Zaragoza. Habitaciones con suministros incluidos y atención personalizada.
+        </p>
+      </div>
+      <div>
+        <div class="font-semibold mb-3">Coliving Delicias</div>
+        <p class="text-gray-400 text-sm">{coliving.address}</p>
+        <p class="text-gray-400 text-sm mt-1">{coliving.city}</p>
+      </div>
+      <div>
+        <div class="font-semibold mb-3">Contacto</div>
+        <a href="tel:+34636155847" class="text-rose-400 hover:text-rose-300 text-sm">+34 636 155 847</a>
+        <p class="text-gray-400 text-sm mt-1">Lunes a Viernes, 9:00 – 19:00</p>
+      </div>
+    </div>
+    <div class="max-w-5xl mx-auto px-6 pt-8 mt-8 border-t border-gray-800 text-center text-xs text-gray-500">
+      © 2025 HOM.ESTATE — Todos los derechos reservados
+    </div>
+  </footer>
+
+</Layout>

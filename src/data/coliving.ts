@@ -1,0 +1,126 @@
+export const coliving = {
+  slug: "apartamento-bruc",
+  name: "Coliving Delicias",
+  tagline: "Tu hogar en Zaragoza, sin complicaciones",
+  city: "Zaragoza",
+  zone: "Barrio Delicias",
+  address: "Calle de las Delicias, 42, Zaragoza",
+  description:
+    "Un coliving moderno en el corazón del barrio Delicias, a 10 minutos del centro de Zaragoza. Perfecto para estudiantes, jóvenes profesionales y personas que buscan vivir en comunidad sin renunciar a su intimidad.",
+  zoneDescription:
+    "El barrio Delicias es uno de los más animados de Zaragoza: mercado de abastos, bares de tapas, supermercados, paradas de tranvía y acceso directo al centro en menos de 15 minutos a pie.",
+  supplies: ["Electricidad", "Agua", "Calefacción", "Wifi 600 Mbps", "Limpieza de zonas comunes 2 días/semana"],
+  deposit: 900,
+  minStayMonths: 1,
+  rules: [
+    "No se permiten mascotas",
+    "Silencio a partir de las 23:00h",
+    "No se puede fumar en el interior",
+    "El piso es mixto (chicos y chicas)",
+    "Perfil: estudiantes y jóvenes profesionales",
+  ],
+  googleCalendarId: "primary",
+  photos: [
+    "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1200&q=80",
+    "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1200&q=80",
+    "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=1200&q=80",
+    "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=1200&q=80",
+  ],
+};
+
+export const rooms = [
+  {
+    id: "hab-1",
+    name: "Habitación Sol",
+    type: "individual",
+    size: 12,
+    description:
+      "Habitación exterior con luz natural durante toda la mañana. Perfecta para quienes madrugan y quieren empezar el día con energía.",
+    equipment: [
+      "Cama 90cm con colchón viscoelástico",
+      "Dos juegos completos de sábanas",
+      "Nórdico y funda",
+      "Armario empotrado",
+      "Escritorio y silla de trabajo",
+      "Estantería",
+      "Toallas (2 juegos)",
+      "Ventilador",
+    ],
+    priceAnnual: 450,
+    priceSemester: 500,
+    priceMonthly: 550,
+    status: "available" as const,
+    photo: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&q=80",
+  },
+  {
+    id: "hab-2",
+    name: "Habitación Luna",
+    type: "individual",
+    size: 10,
+    description:
+      "Habitación acogedora con vistas al patio interior. Tranquila y con buena temperatura en verano gracias a su orientación norte.",
+    equipment: [
+      "Cama 90cm con colchón viscoelástico",
+      "Dos juegos completos de sábanas",
+      "Nórdico y funda",
+      "Armario",
+      "Escritorio y silla de trabajo",
+      "Toallas (2 juegos)",
+      "Ventilador",
+    ],
+    priceAnnual: 430,
+    priceSemester: 480,
+    priceMonthly: 530,
+    status: "occupied" as const,
+    photo: "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=800&q=80",
+  },
+  {
+    id: "hab-3",
+    name: "Habitación Estrella",
+    type: "doble",
+    size: 16,
+    description:
+      "La habitación más grande del coliving. Ideal para dos personas (pareja o amigos). Cama doble de 135cm, escritorio amplio y mucho espacio.",
+    equipment: [
+      "Cama 135cm con colchón viscoelástico",
+      "Dos juegos completos de sábanas",
+      "Nórdico y funda",
+      "Armario doble empotrado",
+      "Escritorio amplio para dos",
+      "Dos sillas de trabajo",
+      "Toallas (2 juegos por persona)",
+      "Ventilador",
+    ],
+    priceAnnual: 600,
+    priceSemester: 660,
+    priceMonthly: 720,
+    status: "available" as const,
+    photo: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=800&q=80",
+  },
+  {
+    id: "hab-4",
+    name: "Habitación Brisa",
+    type: "individual",
+    size: 11,
+    description:
+      "Habitación con balcón privado, una joya del coliving. Perfecta para tomar el café por las mañanas con vistas a la calle.",
+    equipment: [
+      "Cama 90cm con colchón viscoelástico",
+      "Dos juegos completos de sábanas",
+      "Nórdico y funda",
+      "Armario empotrado",
+      "Escritorio y silla de trabajo",
+      "Balcón privado",
+      "Toallas (2 juegos)",
+      "Ventilador",
+    ],
+    priceAnnual: 470,
+    priceSemester: 520,
+    priceMonthly: 570,
+    status: "available" as const,
+    photo: "https://images.unsplash.com/photo-1560185007-c5ca9d2c014d?w=800&q=80",
+  },
+];
+
+export type Room = (typeof rooms)[0];
+export type Coliving = typeof coliving;
