@@ -29,11 +29,19 @@ export default function AvailabilityCalendar({ onDateSelect, selectedDate }: Pro
       .finally(() => setLoading(false));
   }, []);
 
+  const parseLocalDate = (iso: string) => {
+    const d = new Date(iso);
+    return new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+  };
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
   const disabledDays = [
-    { before: new Date() },
+    { before: today },
     ...busyPeriods.map((p) => ({
-      from: new Date(p.start),
-      to: new Date(p.end),
+      from: parseLocalDate(p.start),
+      to: new Date(parseLocalDate(p.end).getTime() - 86400000),
     })),
   ];
 
