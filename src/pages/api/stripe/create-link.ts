@@ -1,15 +1,13 @@
 import type { APIRoute } from "astro";
 import { updateLead } from "../../../lib/airtable";
 import { sendPaymentLink } from "../../../lib/resend";
-import { env } from "cloudflare:workers";
 
 export const GET: APIRoute = async ({ url }) => {
-  const cfEnv = env as unknown as Record<string, string>;
-  const stripeKey = cfEnv.STRIPE_SECRET_KEY ?? "";
-  const airtableKey = cfEnv.AIRTABLE_API_KEY ?? "";
-  const airtableBase = cfEnv.AIRTABLE_BASE_ID ?? "";
-  const resendKey = cfEnv.RESEND_API_KEY ?? "";
-  const internalToken = cfEnv.INTERNAL_API_TOKEN ?? "";
+  const stripeKey = import.meta.env.STRIPE_SECRET_KEY ?? "";
+  const airtableKey = import.meta.env.AIRTABLE_API_KEY ?? "";
+  const airtableBase = import.meta.env.AIRTABLE_BASE_ID ?? "";
+  const resendKey = import.meta.env.RESEND_API_KEY ?? "";
+  const internalToken = import.meta.env.INTERNAL_API_TOKEN ?? "";
 
   const token = url.searchParams.get("token");
   if (internalToken && token !== internalToken) {

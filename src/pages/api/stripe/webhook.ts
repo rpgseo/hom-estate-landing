@@ -2,16 +2,14 @@ import type { APIRoute } from "astro";
 import { getLeadByStripeId, updateLead } from "../../../lib/airtable";
 import { createCalendarEvent } from "../../../lib/google-calendar";
 import { sendBookingConfirmation } from "../../../lib/resend";
-import { env } from "cloudflare:workers";
 
 export const POST: APIRoute = async ({ request }) => {
-  const cfEnv = env as unknown as Record<string, string>;
-  const stripeWebhookSecret = cfEnv.STRIPE_WEBHOOK_SECRET ?? "";
-  const airtableKey = cfEnv.AIRTABLE_API_KEY ?? "";
-  const airtableBase = cfEnv.AIRTABLE_BASE_ID ?? "";
-  const serviceAccountJson = cfEnv.GOOGLE_SERVICE_ACCOUNT_JSON ?? "";
-  const calendarId = cfEnv.GOOGLE_CALENDAR_ID ?? "primary";
-  const resendKey = cfEnv.RESEND_API_KEY ?? "";
+  const stripeWebhookSecret = import.meta.env.STRIPE_WEBHOOK_SECRET ?? "";
+  const airtableKey = import.meta.env.AIRTABLE_API_KEY ?? "";
+  const airtableBase = import.meta.env.AIRTABLE_BASE_ID ?? "";
+  const serviceAccountJson = import.meta.env.GOOGLE_SERVICE_ACCOUNT_JSON ?? "";
+  const calendarId = import.meta.env.GOOGLE_CALENDAR_ID ?? "primary";
+  const resendKey = import.meta.env.RESEND_API_KEY ?? "";
 
   const signature = request.headers.get("stripe-signature") ?? "";
   const body = await request.text();

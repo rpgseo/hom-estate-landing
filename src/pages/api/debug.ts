@@ -1,11 +1,8 @@
 import type { APIRoute } from "astro";
-import { env } from "cloudflare:workers";
 
 export const GET: APIRoute = async () => {
-  const cfEnv = env as unknown as Record<string, string>;
-
-  const calendarId = cfEnv.GOOGLE_CALENDAR_ID ?? "NOT SET";
-  const jsonRaw = cfEnv.GOOGLE_SERVICE_ACCOUNT_JSON ?? "NOT SET";
+  const calendarId = import.meta.env.GOOGLE_CALENDAR_ID ?? "NOT SET";
+  const jsonRaw = import.meta.env.GOOGLE_SERVICE_ACCOUNT_JSON ?? "NOT SET";
 
   let jsonStatus = "NOT SET";
   let clientEmail = "";

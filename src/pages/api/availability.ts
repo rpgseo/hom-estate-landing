@@ -1,13 +1,10 @@
 import type { APIRoute } from "astro";
 import { getBusyPeriods } from "../../lib/google-calendar";
 import { coliving } from "../../data/coliving";
-import { env } from "cloudflare:workers";
 
 export const GET: APIRoute = async ({ url }) => {
-  const cfEnv = env as unknown as Record<string, string>;
-
-  const serviceAccountJson = cfEnv.GOOGLE_SERVICE_ACCOUNT_JSON ?? "";
-  const calendarId = (cfEnv.GOOGLE_CALENDAR_ID || coliving.googleCalendarId);
+  const serviceAccountJson = import.meta.env.GOOGLE_SERVICE_ACCOUNT_JSON ?? "";
+  const calendarId = (import.meta.env.GOOGLE_CALENDAR_ID || coliving.googleCalendarId);
 
   const monthParam = url.searchParams.get("month");
   const now = new Date();

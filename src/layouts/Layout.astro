@@ -10,6 +10,10 @@ const {
   title = "Coliving Delicias Zaragoza — HOM.ESTATE",
   description = "Habitaciones en coliving en Zaragoza con suministros incluidos. Disponibilidad online y reserva fácil.",
 } = Astro.props;
+
+const RETELL_AGENT_ID = import.meta.env.PUBLIC_RETELL_AGENT_ID;
+const RETELL_PUBLIC_KEY = import.meta.env.PUBLIC_RETELL_PUBLIC_KEY;
+const RECAPTCHA_SITE_KEY = import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY;
 ---
 
 <!doctype html>
@@ -26,9 +30,25 @@ const {
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
+    <!-- Google reCAPTCHA v3 (if enabled) -->
+    {RECAPTCHA_SITE_KEY && (
+      <script src={`https://www.google.com/recaptcha/api.js?render=${RECAPTCHA_SITE_KEY}`}></script>
+    )}
   </head>
   <body class="font-sans bg-white text-gray-900 antialiased">
     <slot />
+    <!-- Retell AI Widget (Chat + Voice) -->
+    {RETELL_AGENT_ID && RETELL_PUBLIC_KEY && (
+      <script
+        id="retell-widget"
+        src="https://dashboard.retellai.com/retell-widget.js"
+        type="module"
+        data-public-key={RETELL_PUBLIC_KEY}
+        data-agent-id={RETELL_AGENT_ID}
+        data-agent-version="0"
+        data-title="Asistente de HOM.ESTATE"
+      ></script>
+    )}
   </body>
 </html>
 
